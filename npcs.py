@@ -1,77 +1,41 @@
 import random
 
-class Creature:
-    def __init__(self, name, hp, max_hp, attack):
-        self.name = name
-        self.hp = hp
-        self.max_hp = max_hp
-        self.attack = attack
-
-class Player(Creature):
-    def __init__(self, name="чел"):
-        self.name = name
+class Player:
+    def __init__(self):
+        self.name = "Фриск"
         self.hp = 20
         self.max_hp = 20
-        self.attack = 10
-        self.lv = 19
-        self.gold = 0
-        self.inventory = ["легендарный гирой", "стейк-лицо", "кусок пирага"]
-        self.is_pacifist = False
+        self.inventory = ["кусок пирога", "легендарный герой", "тягучий ирис"]
 
     def show_stats(self):
-        print("\n--- " + self.name + " левел " + str(self.lv) + " ---")
-        print("хп: " + str(self.hp) + "/" + str(self.max_hp))
-        if self.inventory:
-            print("рюкзак: " + ", ".join(self.inventory))
-        else:
-            print("рюкзак: пуста!")
-        print("--------------------")
+        print(f"\n--- {self.name} | HP: {self.hp}/{self.max_hp} ---")
 
     def heal(self, amount, item_name):
-        self.hp = self.hp + amount
-        if self.hp > self.max_hp:
-            self.hp = self.max_hp
-        print("\n ты сьел " + item_name + " и востановил " + str(amount) + " хп!!!")
-        print("щас хп: " + str(self.hp) + "/" + str(self.max_hp))
+        self.hp = min(self.max_hp, self.hp + amount)
+        print(f"Ты съел {item_name} и восстановил {amount} HP!")
 
     def to_dict(self):
-        return {
-            "name": self.name,
-            "hp": self.hp,
-            "max_hp": self.max_hp,
-            "lv": self.lv,
-            "inventory": self.inventory
-        }
+        return {"name": self.name, "hp": self.hp, "inventory": self.inventory}
 
     def load_dict(self, data):
-        self.name = data["name"]
-        self.hp = data["hp"]
-        self.max_hp = data["max_hp"]
-        self.lv = data["lv"]
-        self.inventory = data["inventory"]
+        self.name = data.get("name", self.name)
+        self.hp = data.get("hp", self.hp)
+        self.inventory = data.get("inventory", self.inventory)
 
 
-class Sans(Creature):
+class Sans:
     def __init__(self):
-        self.name = "санс"
         self.hp = 1
-        self.max_hp = 1
-        self.attack = 6
-        self.dodges_left = 5
-        self.betrayal_phase = False
+        self.attack = 5
+        self.dodges_left = 4
+
+    def talk(self):
+        return "говорит: 'какой прекрасный день на улице... птички поют, цветы благоухают...'"
 
     def get_attack_phrase(self):
         phrases = [
-            "санс пускает бластеры!!! пиу пиу лазеры везде!!",
-            "санс зделал синию гравитацию и ты летиш на кости!",
-            "летять синие и оранживые кости уворачивайся давай"
+            "Санс включает гастер-бластеры! *ВЖУУУХ*",
+            "Синие кости летят в твою сторону! Замри!",
+            "Санс швыряет твою душу об стену коридора!"
         ]
         return random.choice(phrases)
-
-    def talk(self):
-        if self.dodges_left > 3:
-            return "санс говорит: поют птички цвитут цветы... кароче крутой день"
-        elif self.dodges_left > 1:
-            return "санс говорит: в такие дни дети как ты... ДОЛЖНЫ ГОРЕТЬ В АДУ!!!"
-        else:
-            return "санс говорит: ппц ты упрямый мелкий"
